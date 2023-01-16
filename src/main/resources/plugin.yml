@@ -1,0 +1,11 @@
+name: Quarrix
+version: '${project.version}'
+main: io.github.quarrix.Quarrix
+api-version: 1.19
+depend: [ Vault ]
+authors: [ emopedia ]
+description: Prison Core Plugin
+commands:
+  stats:
+    description: Shows your player stats
+  spawn:
