@@ -16,6 +16,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RankUpManager implements Listener {
 
@@ -64,260 +67,77 @@ public class RankUpManager implements Listener {
         String rank = stats.getString(player.getUniqueId() + ".rank");
         int money = stats.getInt(player.getUniqueId() + ".money");
 
-        if (rank.equals("E4") && money >= 20000) {
-            stats.set(player.getUniqueId() + ".rank", "E3");
-            stats.set(player.getUniqueId() + ".nextrank", "E2");
-            stats.set(player.getUniqueId() + ".nextrankcost", 40000);
-            stats.set(player.getUniqueId() + ".money", money - 20000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
+        Map<String, Integer> rankCost = new HashMap<>();
+        rankCost.put("E4", 20000);
+        rankCost.put("E3", 40000);
+        rankCost.put("E2", 60000);
+        rankCost.put("E1", 80000);
+        rankCost.put("D4", 100000);
+        rankCost.put("D3", 140000);
+        rankCost.put("D2", 180000);
+        rankCost.put("D1", 240000);
+        rankCost.put("C4", 360000);
+        rankCost.put("C3", 520000);
+        rankCost.put("C2", 640000);
+        rankCost.put("C1", 880000);
+        rankCost.put("B4", 1200000);
+        rankCost.put("B3", 1800000);
+        rankCost.put("B2", 2800000);
+        rankCost.put("B1", 4000000);
+        rankCost.put("A4", 4400000);
+        rankCost.put("A3", 6200000);
+        rankCost.put("A2", 8400000);
+        rankCost.put("A1", 12000000);
+
+        Map<String, String> rankMap = new HashMap<>();
+        rankMap.put("E4", "E3");
+        rankMap.put("E3", "E2");
+        rankMap.put("E2", "E1");
+        rankMap.put("E1", "D4");
+        rankMap.put("D4", "D3");
+        rankMap.put("D3", "D2");
+        rankMap.put("D2", "D1");
+        rankMap.put("D1", "C4");
+        rankMap.put("C4", "C3");
+        rankMap.put("C3", "C2");
+        rankMap.put("C2", "C1");
+        rankMap.put("C1", "B4");
+        rankMap.put("B4", "B3");
+        rankMap.put("B3", "B2");
+        rankMap.put("B2", "B1");
+        rankMap.put("B1", "A4");
+        rankMap.put("A4", "A3");
+        rankMap.put("A3", "A2");
+        rankMap.put("A2", "A1");
+        rankMap.put("A1", "E4");
+
+        if(rankCost.containsKey(rank) && rankMap.containsKey(rank)){
+            int cost = rankCost.get(rank);
+            String nextRank = rankMap.get(rank);
+            if (money >= cost) {
+                stats.set(player.getUniqueId() + ".rank", nextRank);
+                stats.set(player.getUniqueId() + ".nextrank", rankMap.get(nextRank));
+                stats.set(player.getUniqueId() + ".nextrankcost", rankCost.get(nextRank));
+                stats.set(player.getUniqueId() + ".money", money - cost);
+                try {
+                    stats.save(statsFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(nextRank.equals("E4")){
+                    Bukkit.broadcastMessage("§a" + player.getName() + " has prestiged!");
+                    stats.set(player.getUniqueId() + ".money", 0);
+                } else {
+                    Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in " + nextRank + ".");
+                }
+                player.closeInventory();
+            } else {
+                player.sendMessage("§cYou do not have enough money to rank up.");
+                player.closeInventory();
             }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in E3.");
-            player.closeInventory();
-        } else if (rank.equals("E3") && money >= 40000) {
-            stats.set(player.getUniqueId() + ".rank", "E2");
-            stats.set(player.getUniqueId() + ".nextrank", "E1");
-            stats.set(player.getUniqueId() + ".nextrankcost", 60000);
-            stats.set(player.getUniqueId() + ".money", money - 40000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in E2.");
-            player.closeInventory();
-        } else if (rank.equals("E2") && money >= 60000) {
-            stats.set(player.getUniqueId() + ".rank", "E1");
-            stats.set(player.getUniqueId() + ".nextrank", "D4");
-            stats.set(player.getUniqueId() + ".nextrankcost", 80000);
-            stats.set(player.getUniqueId() + ".money", money - 60000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in E1.");
-            player.closeInventory();
-        } else if (rank.equals("E1") && money >= 80000) {
-            stats.set(player.getUniqueId() + ".rank", "D4");
-            stats.set(player.getUniqueId() + ".nextrank", "D3");
-            stats.set(player.getUniqueId() + ".nextrankcost", 100000);
-            stats.set(player.getUniqueId() + ".money", money - 80000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in D4.");
-            player.closeInventory();
-            clearCell(player);
-        } else if (rank.equals("D4") && money >= 100000) {
-            stats.set(player.getUniqueId() + ".rank", "D3");
-            stats.set(player.getUniqueId() + ".nextrank", "D2");
-            stats.set(player.getUniqueId() + ".nextrankcost", 140000);
-            stats.set(player.getUniqueId() + ".money", money - 100000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in D3.");
-            player.closeInventory();
-        } else if (rank.equals("D3") && money >= 140000) {
-            stats.set(player.getUniqueId() + ".rank", "D2");
-            stats.set(player.getUniqueId() + ".nextrank", "D1");
-            stats.set(player.getUniqueId() + ".nextrankcost", 180000);
-            stats.set(player.getUniqueId() + ".money", money - 140000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in D2.");
-            player.closeInventory();
-        } else if (rank.equals("D2") && money >= 180000) {
-            stats.set(player.getUniqueId() + ".rank", "D1");
-            stats.set(player.getUniqueId() + ".nextrank", "C4");
-            stats.set(player.getUniqueId() + ".nextrankcost", 240000);
-            stats.set(player.getUniqueId() + ".money", money - 180000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in D1.");
-            player.closeInventory();
-        } else if (rank.equals("D1") && money >= 240000) {
-            stats.set(player.getUniqueId() + ".rank", "C4");
-            stats.set(player.getUniqueId() + ".nextrank", "C3");
-            stats.set(player.getUniqueId() + ".nextrankcost", 360000);
-            stats.set(player.getUniqueId() + ".money", money - 240000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in C4.");
-            player.closeInventory();
-            clearCell(player);
-        } else if (rank.equals("C4") && money >= 360000) {
-            stats.set(player.getUniqueId() + ".rank", "C3");
-            stats.set(player.getUniqueId() + ".nextrank", "C2");
-            stats.set(player.getUniqueId() + ".nextrankcost", 520000);
-            stats.set(player.getUniqueId() + ".money", money - 360000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in C3.");
-            player.closeInventory();
-        } else if (rank.equals("C3") && money >= 520000) {
-            stats.set(player.getUniqueId() + ".rank", "C2");
-            stats.set(player.getUniqueId() + ".nextrank", "C1");
-            stats.set(player.getUniqueId() + ".nextrankcost", 640000);
-            stats.set(player.getUniqueId() + ".money", money - 520000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in C2.");
-            player.closeInventory();
-        } else if (rank.equals("C2") && money >= 640000) {
-            stats.set(player.getUniqueId() + ".rank", "C1");
-            stats.set(player.getUniqueId() + ".nextrank", "B4");
-            stats.set(player.getUniqueId() + ".nextrankcost", 880000);
-            stats.set(player.getUniqueId() + ".money", money - 640000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in C1.");
-            player.closeInventory();
-        } else if (rank.equals("C1") && money >= 880000) {
-            stats.set(player.getUniqueId() + ".rank", "B4");
-            stats.set(player.getUniqueId() + ".nextrank", "B3");
-            stats.set(player.getUniqueId() + ".nextrankcost", 1200000);
-            stats.set(player.getUniqueId() + ".money", money - 880000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in B4.");
-            player.closeInventory();
-            clearCell(player);
-        } else if (rank.equals("B4") && money >= 1200000) {
-            stats.set(player.getUniqueId() + ".rank", "B3");
-            stats.set(player.getUniqueId() + ".nextrank", "B2");
-            stats.set(player.getUniqueId() + ".nextrankcost", 1800000);
-            stats.set(player.getUniqueId() + ".money", money - 1200000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in B3.");
-            player.closeInventory();
-        } else if (rank.equals("B3") && money >= 1800000) {
-            stats.set(player.getUniqueId() + ".rank", "B2");
-            stats.set(player.getUniqueId() + ".nextrank", "B1");
-            stats.set(player.getUniqueId() + ".nextrankcost", 2800000);
-            stats.set(player.getUniqueId() + ".money", money - 1800000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in B2.");
-            player.closeInventory();
-        } else if (rank.equals("B2") && money >= 2800000) {
-            stats.set(player.getUniqueId() + ".rank", "B1");
-            stats.set(player.getUniqueId() + ".nextrank", "A4");
-            stats.set(player.getUniqueId() + ".nextrankcost", 4000000);
-            stats.set(player.getUniqueId() + ".money", money - 2800000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in B1.");
-            player.closeInventory();
-        } else if (rank.equals("B1") && money >= 4000000) {
-            stats.set(player.getUniqueId() + ".rank", "A4");
-            stats.set(player.getUniqueId() + ".nextrank", "A3");
-            stats.set(player.getUniqueId() + ".nextrankcost", 4400000);
-            stats.set(player.getUniqueId() + ".money", money - 4000000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in A4.");
-            player.closeInventory();
-            clearCell(player);
-        } else if (rank.equals("A4") && money >= 4400000) {
-            stats.set(player.getUniqueId() + ".rank", "A3");
-            stats.set(player.getUniqueId() + ".nextrank", "A2");
-            stats.set(player.getUniqueId() + ".nextrankcost", 6200000);
-            stats.set(player.getUniqueId() + ".money", money - 4400000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in A3.");
-            player.closeInventory();
-        } else if (rank.equals("A3") && money >= 6200000) {
-            stats.set(player.getUniqueId() + ".rank", "A2");
-            stats.set(player.getUniqueId() + ".nextrank", "A1");
-            stats.set(player.getUniqueId() + ".nextrankcost", 8400000);
-            stats.set(player.getUniqueId() + ".money", money - 6200000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in A2.");
-            player.closeInventory();
-        } else if (rank.equals("A2") && money >= 8400000) {
-            stats.set(player.getUniqueId() + ".rank", "A1");
-            stats.set(player.getUniqueId() + ".nextrank", "E4");
-            stats.set(player.getUniqueId() + ".nextrankcost", 12000000);
-            stats.set(player.getUniqueId() + ".money", money - 8400000);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has ranked up! They're now in A1.");
-            player.closeInventory();
-        } else if (rank.equals("A1") && money >= 12000000) {
-            stats.set(player.getUniqueId() + ".rank", "E4");
-            stats.set(player.getUniqueId() + ".nextrank", "E3");
-            stats.set(player.getUniqueId() + ".nextrankcost", 20000);
-            stats.set(player.getUniqueId() + ".money", 0);
-            try {
-                stats.save(statsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Bukkit.broadcastMessage("§a" + player.getName() + " has prestiged!");
-            player.closeInventory();
-            clearCell(player);
-        } else {
-            player.sendMessage("§cYou do not have enough to rank up.");
-            player.sendMessage("§cCost:" + stats.get(player.getUniqueId() + ".nextrankcost"));
-            player.closeInventory();
         }
     }
-
     private void clearCell(Player player) {
         // code to clear player's cell
     }
 }
-
