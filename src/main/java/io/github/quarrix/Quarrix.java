@@ -48,14 +48,16 @@ public final class Quarrix extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new PVPManager(), this);
-        getServer().getPluginManager().registerEvents(new DamageManager(), this);
-        getServer().getPluginManager().registerEvents(new CommissaryManager(), this);
-        getServer().getPluginManager().registerEvents(new RankManager(), this);
-        getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
-        getServer().getPluginManager().registerEvents(new ChestShopManager(), this);
-        getServer().getPluginManager().registerEvents(new RankUpManager(), this);
+        var pm = getServer().getPluginManager();
+
+        pm.registerEvents(new PVPManager(), this);
+        pm.registerEvents(new DamageManager(), this);
+        pm.registerEvents(new CommissaryManager(), this);
+        pm.registerEvents(new RankManager(), this);
+        pm.registerEvents(new BlockBreakListener(), this);
+        pm.registerEvents(new PlayerJoinListener(), this);
+        pm.registerEvents(new ChestShopManager(), this);
+        pm.registerEvents(new RankUpManager(), this);
     }
 
     private void registerItems() {
